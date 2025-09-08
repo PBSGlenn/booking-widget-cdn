@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service Demo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-white min-h-screen">
+    <div class="max-w-2xl mx-auto p-8">
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">Book Your Session</h1>
+            <p class="text-gray-600">Complete your booking in just a few simple steps.</p>
+            
+            <div class="mt-6 flex items-center justify-center">
+                <div class="flex items-center space-x-2">
+                    <span class="text-sm font-medium text-blue-600">Step 1 of 6</span>
+                    <span class="text-sm text-gray-500">17% Complete</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-lg p-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6">Choose Your Service</h2>
+            
+            <div id="services-container" class="space-y-4">
+                <div class="text-center py-8">
+                    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto"></div>
+                    <p class="mt-2 text-gray-500">Loading services...</p>
+                </div>
+            </div>
+            
+            <div class="mt-8">
+                <button class="w-full bg-blue-600 text-white py-3 px-6 rounded-xl font-semibold text-lg hover:bg-blue-700 transition-colors flex items-center justify-center">
+                    NEXT
+                    <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        
+        <div class="text-center mt-8 text-sm text-gray-500">
+            Need help? Email us at <a href="mailto:info@petbehaviourservices.com.au" class="text-blue-600 hover:underline">info@petbehaviourservices.com.au</a>
+        </div>
+    </div>
+
+    <script>
+        async function loadServices() {
+            try {
+                console.log('🔍 Loading services...');
+                const response = await fetch('http://localhost:3002/api/services');
+                const data = await response.json();
+                console.log('📋 Services loaded:', data);
+                
+                if (data.success && data.data && data.data.length > 0) {
+                    const container = document.getElementById('services-container');
+                    container.innerHTML = '';
+                    
+                    data.data.forEach(service => {
+                        const serviceHTML = `
+                            <div class="p-6 border-2 border-gray-200 rounded-xl cursor-pointer transition-all hover:border-gray-300 bg-white">
+                                <div class="flex justify-between items-start">
+                                    <div class="flex-1">
+                                        <h3 class="font-semibold text-lg text-gray-900">${service.name}</h3>
+                                        <p class="text-gray-600 mt-2">${service.description}</p>
+                                        <div class="flex items-center gap-4 mt-3">
+                                            <span class="flex items-center text-sm text-gray-500">
+                                                ⏱️ ${service.duration} minutes
+                                            </span>
+                                            <span class="flex items-center text-sm font-semibold text-gray-900">
+                                                💰 $${service.price}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        container.innerHTML += serviceHTML;
+                    });
+                } else {
+                    document.getElementById('services-container').innerHTML = 
+                        '<div class="text-center py-8 text-red-500">❌ No services available</div>';
+                }
+            } catch (error) {
+                console.error('❌ Error loading services:', error);
+                document.getElementById('services-container').innerHTML = 
+                    '<div class="text-center py-8 text-red-500">❌ Error loading services: ' + error.message + '</div>';
+            }
+        }
+        
+        // Load services when page loads
+        window.addEventListener('load', loadServices);
+    </script>
+</body>
+</html>

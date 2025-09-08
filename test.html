@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API Test</title>
+</head>
+<body>
+    <h1>API Test Page</h1>
+    <button onclick="testAPI()">Test API Call</button>
+    <div id="result"></div>
+    
+    <script>
+        async function testAPI() {
+            const resultDiv = document.getElementById('result');
+            try {
+                console.log('Making API call to http://localhost:3002/api/services');
+                const response = await fetch('http://localhost:3002/api/services');
+                const data = await response.json();
+                console.log('API Response:', data);
+                resultDiv.innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+            } catch (error) {
+                console.error('API Error:', error);
+                resultDiv.innerHTML = '<p style="color: red;">Error: ' + error.message + '</p>';
+            }
+        }
+        
+        // Auto-run on page load
+        window.onload = testAPI;
+    </script>
+</body>
+</html>
