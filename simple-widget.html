@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Pet Behaviour Services - Direct Booking Widget</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: #f8f9fa;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .widget-container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            max-width: 600px;
+            width: 100%;
+            margin: 1rem;
+        }
+        .status-banner {
+            background: #28a745;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #007bff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .error-message {
+            background: #dc3545;
+            color: white;
+            padding: 1rem;
+            border-radius: 4px;
+            margin: 1rem 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="widget-container">
+        <div class="status-banner">
+            🚀 DIRECT WIDGET - NO ROUTING VERSION 4
+        </div>
+        <div id="widget-status">
+            <div class="loading-spinner"></div> Loading booking widget...
+        </div>
+        <div id="booking-widget-root"></div>
+    </div>
+
+    <script>
+        console.log('🎯 DIRECT WIDGET HTML - VERSION 4 - NO REACT ROUTER!');
+        console.log('⏰ Direct load timestamp:', new Date().toISOString());
+        
+        // Update status
+        function updateStatus(message, isError = false) {
+            const statusDiv = document.getElementById('widget-status');
+            statusDiv.innerHTML = isError ? 
+                '<div class="error-message">' + message + '</div>' : 
+                '<div>✅ ' + message + '</div>';
+        }
+        
+        // Load React and dependencies
+        function loadScript(src) {
+            return new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = src;
+                script.onload = resolve;
+                script.onerror = reject;
+                document.head.appendChild(script);
+            });
+        }
+        
+        async function initializeBookingWidget() {
+            try {
+                updateStatus('Loading React libraries...');
+                
+                // Load React dependencies
+                await loadScript('https://unpkg.com/react@18/umd/react.production.min.js');
+                await loadScript('https://unpkg.com/react-dom@18/umd/react-dom.production.min.js');
+                
+                updateStatus('Loading booking widget components...');
+                
+                // Create a simple booking form
+                const BookingForm = () => {
+                    const [step, setStep] = React.useState(1);
+                    const [formData, setFormData] = React.useState({
+                        service: '',
+                        deliveryMethod: 'zoom',
+                        date: '',
+                        time: '',
+                        clientName: '',
+                        email: '',
+                        phone: ''
+                    });
+                    
+                    const services = [
+                        { id: 'consultation-60', name: '60 Min Consultation', price: 280 },
+                        { id: 'consultation-90', name: '90 Min Consultation', price: 280 }
+                    ];
+                    
+                    const renderStep = () => {
+                        switch(step) {
+                            case 1:
+                                return React.createElement('div', { className: 'step' },
+                                    React.createElement('h3', null, '1. Select Service'),
+                                    React.createElement('select', {
+                                        value: formData.service,
+                                        onChange: (e) => setFormData({...formData, service: e.target.value}),
+                                        style: { width: '100%', padding: '12px', margin: '8px 0', border: '1px solid #ddd', borderRadius: '4px' }
+                                    },
+                                        React.createElement('option', { value: '' }, 'Choose a service...'),
+                                        services.map(service => 
+                                            React.createElement('option', { key: service.id, value: service.id }, 
+                                                service.name + ' - $' + service.price)
+                                        )
+                                    ),
+                                    formData.service && React.createElement('button', {
+                                        onClick: () => setStep(2),
+                                        style: { 
+                                            background: '#007bff', color: 'white', padding: '12px 24px', 
+                                            border: 'none', borderRadius: '4px', marginTop: '16px', cursor: 'pointer'
+                                        }
+                                    }, 'Next →')
+                                );
+                                
+                            case 2:
+                                return React.createElement('div', { className: 'step' },
+                                    React.createElement('h3', null, '2. Delivery Method'),
+                                    React.createElement('label', { style: { display: 'block', margin: '8px 0' } },
+                                        React.createElement('input', {
+                                            type: 'radio',
+                                            name: 'delivery',
+                                            value: 'zoom',
+                                            checked: formData.deliveryMethod === 'zoom',
+                                            onChange: (e) => setFormData({...formData, deliveryMethod: e.target.value})
+                                        }),
+                                        ' Zoom Consultation'
+                                    ),
+                                    React.createElement('label', { style: { display: 'block', margin: '8px 0' } },
+                                        React.createElement('input', {
+                                            type: 'radio',
+                                            name: 'delivery',
+                                            value: 'home',
+                                            checked: formData.deliveryMethod === 'home',
+                                            onChange: (e) => setFormData({...formData, deliveryMethod: e.target.value})
+                                        }),
+                                        ' Home Visit'
+                                    ),
+                                    React.createElement('div', { style: { marginTop: '16px' } },
+                                        React.createElement('button', {
+                                            onClick: () => setStep(1),
+                                            style: { 
+                                                background: '#6c757d', color: 'white', padding: '12px 24px', 
+                                                border: 'none', borderRadius: '4px', marginRight: '8px', cursor: 'pointer'
+                                            }
+                                        }, '← Back'),
+                                        React.createElement('button', {
+                                            onClick: () => setStep(3),
+                                            style: { 
+                                                background: '#007bff', color: 'white', padding: '12px 24px', 
+                                                border: 'none', borderRadius: '4px', cursor: 'pointer'
+                                            }
+                                        }, 'Next →')
+                                    )
+                                );
+                                
+                            case 3:
+                                return React.createElement('div', { className: 'step' },
+                                    React.createElement('h3', null, '3. Your Details'),
+                                    React.createElement('input', {
+                                        type: 'text',
+                                        placeholder: 'Your Name',
+                                        value: formData.clientName,
+                                        onChange: (e) => setFormData({...formData, clientName: e.target.value}),
+                                        style: { width: '100%', padding: '12px', margin: '8px 0', border: '1px solid #ddd', borderRadius: '4px' }
+                                    }),
+                                    React.createElement('input', {
+                                        type: 'email',
+                                        placeholder: 'Email Address',
+                                        value: formData.email,
+                                        onChange: (e) => setFormData({...formData, email: e.target.value}),
+                                        style: { width: '100%', padding: '12px', margin: '8px 0', border: '1px solid #ddd', borderRadius: '4px' }
+                                    }),
+                                    React.createElement('input', {
+                                        type: 'tel',
+                                        placeholder: 'Phone Number',
+                                        value: formData.phone,
+                                        onChange: (e) => setFormData({...formData, phone: e.target.value}),
+                                        style: { width: '100%', padding: '12px', margin: '8px 0', border: '1px solid #ddd', borderRadius: '4px' }
+                                    }),
+                                    React.createElement('div', { style: { marginTop: '16px' } },
+                                        React.createElement('button', {
+                                            onClick: () => setStep(2),
+                                            style: { 
+                                                background: '#6c757d', color: 'white', padding: '12px 24px', 
+                                                border: 'none', borderRadius: '4px', marginRight: '8px', cursor: 'pointer'
+                                            }
+                                        }, '← Back'),
+                                        formData.clientName && formData.email && React.createElement('button', {
+                                            onClick: () => {
+                                                updateStatus('Booking submitted successfully! (Demo mode)', false);
+                                                console.log('📋 Booking Data:', formData);
+                                                alert('Booking submitted! Check console for details.');
+                                            },
+                                            style: { 
+                                                background: '#28a745', color: 'white', padding: '12px 24px', 
+                                                border: 'none', borderRadius: '4px', cursor: 'pointer'
+                                            }
+                                        }, '✅ Submit Booking')
+                                    )
+                                );
+                                
+                            default:
+                                return React.createElement('div', null, 'Unknown step');
+                        }
+                    };
+                    
+                    return React.createElement('div', { style: { padding: '1rem 0' } },
+                        React.createElement('div', { 
+                            style: { 
+                                background: '#e9ecef', padding: '8px 16px', 
+                                borderRadius: '4px', marginBottom: '16px', fontSize: '14px' 
+                            } 
+                        }, 'Step ' + step + ' of 3'),
+                        renderStep()
+                    );
+                };
+                
+                updateStatus('Rendering booking form...');
+                
+                const container = document.getElementById('booking-widget-root');
+                const root = ReactDOM.createRoot(container);
+                root.render(React.createElement(BookingForm));
+                
+                updateStatus('Booking widget loaded successfully!');
+                
+            } catch (error) {
+                console.error('❌ Widget loading error:', error);
+                updateStatus('Error loading booking widget: ' + error.message, true);
+            }
+        }
+        
+        // Initialize widget when page loads
+        document.addEventListener('DOMContentLoaded', initializeBookingWidget);
+    </script>
+</body>
+</html>
