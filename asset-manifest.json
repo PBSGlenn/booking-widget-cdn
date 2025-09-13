@@ -1,12 +1,12 @@
 {
   "files": {
     "main.css": "/booking-widget-cdn/static/css/main.05f0a029.css",
-    "main.js": "/booking-widget-cdn/static/js/main.f7bb70fb.js",
+    "main.js": "/booking-widget-cdn/static/js/main.78bdf765.js",
     "static/js/206.ed2f3d44.chunk.js": "/booking-widget-cdn/static/js/206.ed2f3d44.chunk.js",
     "index.html": "/booking-widget-cdn/index.html"
   },
   "entrypoints": [
     "static/css/main.05f0a029.css",
-    "static/js/main.f7bb70fb.js"
+    "static/js/main.78bdf765.js"
   ]
 }
